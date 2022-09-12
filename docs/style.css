@@ -1,10 +1,14 @@
 * {
 	font: "Arial";
-	border: 1px solid black;
 }
 
 body {
 	margin: 0;
+}
+
+button {
+	width: 8rem;
+	height: 3rem;
 }
 
 .container {

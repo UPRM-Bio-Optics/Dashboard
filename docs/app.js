@@ -1,12 +1,13 @@
 var client;
 
+var BROKER = "broker.hivemq.com";
+var PORT = Number(8000);
+var CLIENT_ID = "bio-optics-pc";
+var topic = "SSH/NCAS-M";
+
 function connect() {
 	// Create a client instance: Broker, Port, Websocket Path, Client ID
-	client = new Paho.MQTT.Client(
-		"broker.mqttdashboard.com",
-		Number(8000),
-		"clientId-bob"
-	);
+	client = new Paho.MQTT.Client(BROKER, PORT, CLIENT_ID);
 
 	// set callback handlers
 	client.onConnectionLost = function (responseObject) {
@@ -21,7 +22,9 @@ function connect() {
 	// Called when the connection is made
 	function onConnect() {
 		console.log("Connected!");
-		client.subscribe("/Echosounder");
+		$("#logger").empty();
+		$("#logger").append("Connected and listening... </br>");
+		client.subscribe(topic);
 	}
 
 	// Connect the client, providing an onConnect callback
@@ -32,12 +35,13 @@ function connect() {
 
 async function publish() {
 	$("#logger").empty();
+	$("#logger").append("Connected and listening... </br>");
 	for (var i = 0; i < 20; i++) {
 		var value = Math.floor(Math.random() * (50 - 10) + 10).toString();
 
 		// Publish a Message
 		var message = new Paho.MQTT.Message(value);
-		message.destinationName = "/Echosounder";
+		message.destinationName = topic;
 		message.qos = 0;
 
 		await setTimeout(client.send(message), 5000);
