@@ -6,6 +6,11 @@ var CLIENT_ID = "bio-optics-pc";
 var topic = "SSH/NCAS-M";
 
 function connect() {
+	$("#logger").empty();
+	$("#logger").append("Host: " + BROKER + "</br>");
+	$("#logger").append("Port:" + PORT + "</br>");
+	$("#logger").append("Topic: " + topic + "</br>");
+
 	// Create a client instance: Broker, Port, Websocket Path, Client ID
 	client = new Paho.MQTT.Client(BROKER, PORT, CLIENT_ID);
 
@@ -22,7 +27,6 @@ function connect() {
 	// Called when the connection is made
 	function onConnect() {
 		console.log("Connected!");
-		$("#logger").empty();
 		$("#logger").append("Connected and listening... </br>");
 		client.subscribe(topic);
 	}
@@ -30,12 +34,11 @@ function connect() {
 	// Connect the client, providing an onConnect callback
 	client.connect({
 		onSuccess: onConnect,
+		useSSL: true,
 	});
 }
 
 async function publish() {
-	$("#logger").empty();
-	$("#logger").append("Connected and listening... </br>");
 	for (var i = 0; i < 20; i++) {
 		var value = Math.floor(Math.random() * (50 - 10) + 10).toString();
 
@@ -44,6 +47,6 @@ async function publish() {
 		message.destinationName = topic;
 		message.qos = 0;
 
-		await setTimeout(client.send(message), 5000);
+		client.send(message);
 	}
 }
