@@ -1,3 +1,5 @@
+import Brightness4Icon from "@mui/icons-material/Brightness4";
+import Brightness7Icon from "@mui/icons-material/Brightness7";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import MenuIcon from "@mui/icons-material/Menu";
@@ -90,8 +92,28 @@ const Drawer = styled(MuiDrawer, {
 
 export default function NavBar() {
 	const theme = useTheme();
-	const [open, setOpen] = useState(false);
 
+	console.log("og theme: ", theme.palette);
+
+	const [colorModeIcon, setColorModeIcon] = useState(<Brightness7Icon />);
+
+	const toggleColorMode = () => {
+		console.log("before: ", theme.palette.mode);
+
+		if (theme.palette.mode === "light") {
+			theme.palette.mode = "dark";
+			setColorModeIcon(<Brightness4Icon />);
+		} else {
+			theme.palette.mode = "light";
+			setColorModeIcon(<Brightness7Icon />);
+		}
+
+		console.log("after: ", theme.palette.mode);
+
+		console.log("new theme: ", theme.palette);
+	};
+
+	const [open, setOpen] = useState(false);
 	const handleDrawerOpen = () => {
 		setOpen(true);
 	};
@@ -127,9 +149,12 @@ export default function NavBar() {
 					>
 						<MenuIcon />
 					</IconButton>
-					<Typography variant="h6" noWrap component="div">
+					<Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
 						Bathymetry Observation Boat
 					</Typography>
+					<IconButton sx={{ ml: 1 }} onClick={toggleColorMode} color="inherit">
+						{colorModeIcon}
+					</IconButton>
 				</Toolbar>
 			</AppBar>
 			<Drawer variant="permanent" open={open}>
