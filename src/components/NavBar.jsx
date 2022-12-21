@@ -153,7 +153,7 @@ export default function NavBar() {
 									px: 2.5,
 								}}
 								onClick={() => {
-									index == 0 ? handleGraphs() : handleMonitor();
+									index === 0 ? handleGraphs() : handleMonitor();
 								}}
 							>
 								<ListItemIcon
@@ -171,9 +171,12 @@ export default function NavBar() {
 					))}
 				</List>
 			</Drawer>
-			<Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+			<Box
+				component="main"
+				sx={{ flexGrow: 0, p: 4, width: "100vw", height: "80vh" }}
+			>
 				<DrawerHeader />
-				<Typography>{content}</Typography>
+				{content}
 			</Box>
 		</Box>
 	);
