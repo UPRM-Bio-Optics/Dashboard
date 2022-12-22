@@ -74,7 +74,7 @@ export default function Graphs() {
 	};
 
 	return (
-		<Grid container>
+		<Grid container spacing={1}>
 			<Grid item xs={3}>
 				{sensors}
 				<br />
@@ -98,7 +98,11 @@ export default function Graphs() {
 						},
 						{ type: "bar", x: [1, 2, 3], y: [2, 5, 3] },
 					]}
-					layout={{ title: "A Fancy Plot" }}
+					layout={{
+						title: "A Fancy Plot",
+						paper_bgcolor: "rgba(0,0,0,0)",
+						plot_bgcolor: "rgba(0,0,0,0)",
+					}}
 				/>
 			</Grid>
 		</Grid>

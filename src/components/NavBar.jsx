@@ -90,27 +90,22 @@ const Drawer = styled(MuiDrawer, {
 	}),
 }));
 
-export default function NavBar() {
+export default function NavBar(props) {
 	const theme = useTheme();
-
-	console.log("og theme: ", theme.palette);
 
 	const [colorModeIcon, setColorModeIcon] = useState(<Brightness7Icon />);
 
 	const toggleColorMode = () => {
-		console.log("before: ", theme.palette.mode);
-
-		if (theme.palette.mode === "light") {
-			theme.palette.mode = "dark";
+		// console.log("og props: ", props);
+		if (props.scheme === "light") {
+			props.setScheme("dark");
 			setColorModeIcon(<Brightness4Icon />);
 		} else {
-			theme.palette.mode = "light";
+			props.setScheme("light");
 			setColorModeIcon(<Brightness7Icon />);
 		}
 
-		console.log("after: ", theme.palette.mode);
-
-		console.log("new theme: ", theme.palette);
+		// console.log("after props: ", props);
 	};
 
 	const [open, setOpen] = useState(false);
