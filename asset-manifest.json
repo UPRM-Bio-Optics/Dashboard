@@ -1,16 +1,15 @@
 {
   "files": {
     "main.css": "/Dashboard-Bathymtry/static/css/main.073c9b0a.css",
-    "main.js": "/Dashboard-Bathymtry/static/js/main.b7728fca.js",
+    "main.js": "/Dashboard-Bathymtry/static/js/main.0fc333ea.js",
     "static/js/787.64296f14.chunk.js": "/Dashboard-Bathymtry/static/js/787.64296f14.chunk.js",
-    "static/media/logo.svg": "/Dashboard-Bathymtry/static/media/logo.6ce24c58023cc2f8fd88fe9d219db6c6.svg",
     "index.html": "/Dashboard-Bathymtry/index.html",
     "main.073c9b0a.css.map": "/Dashboard-Bathymtry/static/css/main.073c9b0a.css.map",
-    "main.b7728fca.js.map": "/Dashboard-Bathymtry/static/js/main.b7728fca.js.map",
+    "main.0fc333ea.js.map": "/Dashboard-Bathymtry/static/js/main.0fc333ea.js.map",
     "787.64296f14.chunk.js.map": "/Dashboard-Bathymtry/static/js/787.64296f14.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.073c9b0a.css",
-    "static/js/main.b7728fca.js"
+    "static/js/main.0fc333ea.js"
   ]
 }
