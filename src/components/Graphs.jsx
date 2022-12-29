@@ -37,7 +37,7 @@ export default function Graphs() {
 	);
 
 	// ===================== Graphs =====================
-	const [graph, setGraph] = useState("Contour");
+	const [graph, setGraph] = useState("Map");
 
 	const handleGraph = (event) => {
 		setGraph(event.target.value);
@@ -142,54 +142,86 @@ export default function Graphs() {
 
 	const handleData = async () => {
 		console.log("Fetching Data...");
-		if (sensor === "Echosounder") {
-			await fetch(
-				"https://raw.githubusercontent.com/UPRM-Bio-Optics/Bathymetry-Observation-Boat/main/Data/echo_sounder/" +
-					file
-			)
-				.then((response) => response.text())
-				.then((data) => data.split("\n"))
-				.then(
-					(csv) => {
-						// buffers
-						setX([]);
-						setY([]);
-						setZ([]);
 
-						for (var i in csv) {
-							csv[i] = csv[i].split(",");
+		var url =
+			"https://raw.githubusercontent.com/UPRM-Bio-Optics/Bathymetry-Observation-Boat/main/Data/echo_sounder/";
 
-							// Skip first index as it contains header text and skip empty rows
-							if (i <= 0 || csv[i].includes("") || csv[i].includes(undefined)) {
-								continue;
-							}
+		if (sensor === "Spectrometer") {
+			url =
+				"https://raw.githubusercontent.com/UPRM-Bio-Optics/Bathymetry-Observation-Boat/main/Data/Spectrometer/csv/";
+		}
 
-							x.push(csv[i][0]);
-							y.push(csv[i][1]);
+		await fetch(url + file)
+			.then((response) => response.text())
+			.then((data) => data.split("\n"))
+			.then(
+				(csv) => {
+					// buffers
+					setX([]);
+					setY([]);
+					setZ([]);
 
-							if (sensor === "Echosounder") {
-								z.push(csv[i][2]);
-							}
+					for (var i in csv) {
+						csv[i] = csv[i].split(",");
+
+						// Skip first index as it contains header text and skip empty rows
+						if (i <= 0 || csv[i].includes("") || csv[i].includes(undefined)) {
+							continue;
 						}
 
-						handlePlot();
+						x.push(csv[i][0]);
+						y.push(csv[i][1]);
 
-						console.log(x, y, z);
+						if (sensor === "Echosounder") {
+							z.push(csv[i][2]);
+						}
 					}
-					// console.log("after split: ", csv);
-				);
-		}
+
+					handlePlot();
+
+					console.log(x, y, z);
+				}
+				// console.log("after split: ", csv);
+			);
 	};
 
 	// ===================== Plotly =====================
-	const [plot, setPlot] = useState(<h4>Waiting for user input</h4>);
+	const [colorscale, setColorscale] = useState("Viridis");
+	const colorscales = (
+		<FormControl fullWidth>
+			<InputLabel id="colorscale-select">Colorscale</InputLabel>
+			<Select
+				labelId="colorscale-select"
+				id="colorscale-select"
+				value={colorscale}
+				label="Colorscale"
+				onChange={(e) => setColorscale(e.target.value)}
+			>
+				<MenuItem value={"Viridis"}>Viridis</MenuItem>
+				<MenuItem value={"Jet"}>Jet</MenuItem>
+				<MenuItem value={"Portland"}>Portland</MenuItem>
+				<MenuItem value={"Picnic"}>Picnic</MenuItem>
+				<MenuItem value={"Electric"}>Elecric</MenuItem>
+				<MenuItem value={"Earth"}>Earth</MenuItem>
+				<MenuItem value={"Blackbody"}>Blackbody</MenuItem>
+				<MenuItem value={"RdBu"}>RdBu</MenuItem>
+				<MenuItem value={"Greys"}>Greys</MenuItem>
+			</Select>
+		</FormControl>
+	);
+
+	const width = 1000;
+	const height = 700;
+	const [plot, setPlot] = useState(
+		<h4 id="wait">Waiting for user input...</h4>
+	);
 	const handlePlot = () => {
 		if (file === "") {
 			return;
 		}
 
 		if (graph === "Contour") {
-			console.log("Plotting...");
+			console.log("Plotting Contour...");
 			setPlot(
 				<Plot
 					data={[
@@ -206,13 +238,13 @@ export default function Graphs() {
 								title: "Depth (ft)",
 								titleside: "right",
 							},
-							colorscale: "Earth",
+							colorscale: colorscale,
 						},
 					]}
 					layout={{
 						title: "Contour",
-						height: 500,
-						width: 900,
+						height: height,
+						width: width,
 						margin: {
 							l: 70,
 							r: 0,
@@ -237,13 +269,13 @@ export default function Graphs() {
 							z: z,
 							type: "mesh3d",
 							intensity: z,
-							colorscale: "Earth",
+							colorscale: colorscale,
 						},
 					]}
 					layout={{
 						title: "Mesh",
-						height: 500,
-						width: 900,
+						height: height,
+						width: width,
 						scene: {
 							xaxis: {
 								title: "Longuitud",
@@ -344,15 +376,18 @@ export default function Graphs() {
 				<Plot
 					data={[
 						{
-							lon: x,
-							lat: y,
+							lat: x,
+							lon: y,
 							z: z,
 							type: "densitymapbox",
-							colorscale: "Earth",
+							colorscale: colorscale,
 						},
 					]}
 					layout={{
-						title: "Map",
+						title: "Map Overlay",
+						autosize: false,
+						height: height,
+						width: width,
 						mapbox: {
 							style: "white-bg",
 							layers: [
@@ -365,22 +400,59 @@ export default function Graphs() {
 								},
 							],
 							center: {
-								lon: (Math.max(...x) + Math.min(...x)) / 2,
-								lat: (Math.max(...y) + Math.min(...y)) / 2,
+								lat: (Math.max(...x) + Math.min(...x)) / 2,
+								lon: (Math.max(...y) + Math.min(...y)) / 2,
 							},
 							zoom: 17,
 						},
 						xaxis: {
-							title: "Longuitud",
+							title: "Latitude",
 						},
 						yaxis: {
-							title: "Latitude",
+							title: "Longuitud",
 						},
 						margin: {
 							l: 0,
 							r: 0,
 							b: 0,
 							t: 30,
+						},
+						paper_bgcolor: "rgba(0,0,0,0)",
+						plot_bgcolor: "rgba(0,0,0,0)",
+					}}
+					config={{ responsive: true }}
+				/>
+			);
+		}
+
+		if (graph === "Spectrum") {
+			console.log("Plotting Spectrum...");
+			setPlot(
+				<Plot
+					data={[
+						{
+							x: x,
+							y: y,
+							type: "scatter",
+							mode: "lines",
+							line: { color: "green" },
+						},
+					]}
+					layout={{
+						title: "Spectrum",
+						height: height,
+						width: width,
+						margin: {
+							l: 70,
+							r: 0,
+							b: 40,
+							t: 30,
+						},
+						xaxis: {
+							title: "Intensity (au)",
+						},
+						yaxis: {
+							title: "Wavelength (nm)",
 						},
 						paper_bgcolor: "rgba(0,0,0,0)",
 						plot_bgcolor: "rgba(0,0,0,0)",
@@ -411,15 +483,25 @@ export default function Graphs() {
 
 	// ===================== Return =====================
 	return (
-		<Grid container spacing={1}>
-			<Grid item xs={3}>
+		<Grid
+			container
+			direction="row"
+			justifyContent="flex-start"
+			alignItems="flex-start"
+			spacing={3}
+		>
+			<Grid className="graph" item xs={3}>
+				<br />
 				{sensors}
+				<br />
+				<br />
+				{files}
 				<br />
 				<br />
 				{graphs}
 				<br />
 				<br />
-				{files}
+				{colorscales}
 				<br />
 				<br />
 				<Button
@@ -430,7 +512,12 @@ export default function Graphs() {
 					{button}
 				</Button>
 			</Grid>
-			<Grid item xs={9}>
+			<Grid
+				className="graph"
+				item
+				xs={9}
+				// sx={{ width: "100vw", height: "100vh" }}
+			>
 				{plot}
 			</Grid>
 		</Grid>

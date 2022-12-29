@@ -37,7 +37,7 @@ function App() {
 		palette: {
 			mode: "light",
 			primary: {
-				main: "#457130",
+				main: "#0F8F46",
 			},
 			secondary: {
 				main: "#b57136",
