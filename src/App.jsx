@@ -3,6 +3,7 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { useState } from "react";
 import "./App.css";
 import NavBar from "./components/NavBar";
+import "./FixImport"
 
 function App() {
 	const [scheme, setScheme] = useState("light");

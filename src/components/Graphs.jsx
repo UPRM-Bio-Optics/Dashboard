@@ -220,246 +220,237 @@ export default function Graphs() {
 			return;
 		}
 
+		var data = {};
+		var layout = {};
+
 		if (graph === "Contour") {
 			console.log("Plotting Contour...");
-			setPlot(
-				<Plot
-					data={[
-						{
-							x: x,
-							y: y,
-							z: z,
-							type: "contour",
-							contours: {
-								coloring: "heatmap",
-							},
-							// ncontours: Math.max(...z_data),
-							colorbar: {
-								title: "Depth (ft)",
-								titleside: "right",
-							},
-							colorscale: colorscale,
-						},
-					]}
-					layout={{
-						title: "Contour",
-						height: height,
-						width: width,
-						margin: {
-							l: 70,
-							r: 0,
-							b: 40,
-							t: 30,
-						},
-						paper_bgcolor: "rgba(0,0,0,0)",
-						plot_bgcolor: "rgba(0,0,0,0)",
-					}}
-				/>
-			);
+			data = [
+				{
+					x: x,
+					y: y,
+					z: z,
+					type: "contour",
+					contours: {
+						coloring: "heatmap",
+					},
+					// ncontours: Math.max(...z_data),
+					colorbar: {
+						title: "Depth (ft)",
+						titleside: "right",
+					},
+					colorscale: colorscale,
+				},
+			];
+
+			layout = {
+				title: "Contour",
+				height: height,
+				width: width,
+				margin: {
+					l: 70,
+					r: 0,
+					b: 40,
+					t: 30,
+				},
+				paper_bgcolor: "rgba(0,0,0,0)",
+				plot_bgcolor: "rgba(0,0,0,0)",
+			};
 		}
 
 		if (graph === "Mesh") {
 			console.log("Plotting Mesh...");
-			setPlot(
-				<Plot
-					data={[
-						{
-							x: x,
-							y: y,
-							z: z,
-							type: "mesh3d",
-							intensity: z,
-							colorscale: colorscale,
-						},
-					]}
-					layout={{
-						title: "Mesh",
-						height: height,
-						width: width,
-						scene: {
-							xaxis: {
-								title: "Longuitud",
-								showgrid: true,
-							},
-							yaxis: {
-								title: "Latitude",
-								showgrid: true,
-							},
-							zaxis: {
-								title: "Depth",
-								autorange: "reversed",
-								showgrid: true,
-							},
-							aspectmode: "manual",
-							aspectratio: {
-								x: 1,
-								y: 1,
-								z: 0.5,
-							},
-						},
-						updatemenus: [
+			data = [
+				{
+					x: x,
+					y: y,
+					z: z,
+					type: "mesh3d",
+					intensity: z,
+					colorscale: colorscale,
+				},
+			];
+			layout = {
+				title: "Mesh",
+				height: height,
+				width: width,
+				scene: {
+					xaxis: {
+						title: "Longuitud",
+						showgrid: true,
+					},
+					yaxis: {
+						title: "Latitude",
+						showgrid: true,
+					},
+					zaxis: {
+						title: "Depth",
+						autorange: "reversed",
+						showgrid: true,
+					},
+					aspectmode: "manual",
+					aspectratio: {
+						x: 1,
+						y: 1,
+						z: 0.5,
+					},
+				},
+				updatemenus: [
+					{
+						buttons: [
 							{
-								buttons: [
-									{
-										args: ["opacity", 1],
-										label: "Solid",
-										method: "restyle",
-									},
-									{
-										args: ["opacity", 0.5],
-										label: "Transparent",
-										method: "restyle",
-									},
-								],
-								direction: "left",
-								pad: { r: 0, l: 0, t: 0, b: 0 },
-								showactive: true,
-								type: "buttons",
-								// x: 0.05,
-								xanchor: "left",
-								y: 1.05,
-								yanchor: "top",
-								bgcolor: "rgb(255,255,255)",
+								args: ["opacity", 1],
+								label: "Solid",
+								method: "restyle",
 							},
 							{
-								buttons: [
-									{
-										args: [
-											{
-												"scene.xaxis.visible": true,
-												"scene.yaxis.visible": true,
-												"scene.zaxis.visible": true,
-											},
-										],
-										label: "Show Grid",
-										method: "relayout",
-									},
-									{
-										args: [
-											{
-												"scene.xaxis.visible": false,
-												"scene.yaxis.visible": false,
-												"scene.zaxis.visible": false,
-											},
-										],
-										label: "Hide Grid",
-										method: "relayout",
-									},
-								],
-								direction: "left",
-								pad: { r: 0, l: 0, t: 0, b: 0 },
-								showactive: true,
-								type: "buttons",
-								// x: 0.05,
-								xanchor: "left",
-								y: 0.99,
-								yanchor: "top",
-								bgcolor: "rgb(255,255,255)",
+								args: ["opacity", 0.5],
+								label: "Transparent",
+								method: "restyle",
 							},
 						],
-						margin: {
-							l: 0,
-							r: 0,
-							b: 0,
-							t: 30,
-						},
-						paper_bgcolor: "rgba(0,0,0,0)",
-						plot_bgcolor: "rgba(0,0,0,0)",
-					}}
-				/>
-			);
+						direction: "left",
+						pad: { r: 0, l: 0, t: 0, b: 0 },
+						showactive: true,
+						type: "buttons",
+						// x: 0.05,
+						xanchor: "left",
+						y: 1.05,
+						yanchor: "top",
+						bgcolor: "rgb(255,255,255)",
+					},
+					{
+						buttons: [
+							{
+								args: [
+									{
+										"scene.xaxis.visible": true,
+										"scene.yaxis.visible": true,
+										"scene.zaxis.visible": true,
+									},
+								],
+								label: "Show Grid",
+								method: "relayout",
+							},
+							{
+								args: [
+									{
+										"scene.xaxis.visible": false,
+										"scene.yaxis.visible": false,
+										"scene.zaxis.visible": false,
+									},
+								],
+								label: "Hide Grid",
+								method: "relayout",
+							},
+						],
+						direction: "left",
+						pad: { r: 0, l: 0, t: 0, b: 0 },
+						showactive: true,
+						type: "buttons",
+						// x: 0.05,
+						xanchor: "left",
+						y: 0.99,
+						yanchor: "top",
+						bgcolor: "rgb(255,255,255)",
+					},
+				],
+				margin: {
+					l: 0,
+					r: 0,
+					b: 0,
+					t: 30,
+				},
+				paper_bgcolor: "rgba(0,0,0,0)",
+				plot_bgcolor: "rgba(0,0,0,0)",
+			};
 		}
 
 		if (graph === "Map") {
 			console.log("Plotting Map...");
-			setPlot(
-				<Plot
-					data={[
+
+			data = [
+				{
+					lat: x,
+					lon: y,
+					z: z,
+					type: "densitymapbox",
+					colorscale: colorscale,
+				},
+			];
+			layout = {
+				title: "Map Overlay",
+				autosize: false,
+				height: height,
+				width: width,
+				mapbox: {
+					style: "white-bg",
+					layers: [
 						{
-							lat: x,
-							lon: y,
-							z: z,
-							type: "densitymapbox",
-							colorscale: colorscale,
-						},
-					]}
-					layout={{
-						title: "Map Overlay",
-						autosize: false,
-						height: height,
-						width: width,
-						mapbox: {
-							style: "white-bg",
-							layers: [
-								{
-									sourcetype: "raster",
-									source: [
-										"https://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryOnly/MapServer/tile/{z}/{y}/{x}",
-									],
-									below: "traces",
-								},
+							sourcetype: "raster",
+							source: [
+								"https://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryOnly/MapServer/tile/{z}/{y}/{x}",
 							],
-							center: {
-								lat: (Math.max(...x) + Math.min(...x)) / 2,
-								lon: (Math.max(...y) + Math.min(...y)) / 2,
-							},
-							zoom: 17,
+							below: "traces",
 						},
-						xaxis: {
-							title: "Latitude",
-						},
-						yaxis: {
-							title: "Longuitud",
-						},
-						margin: {
-							l: 0,
-							r: 0,
-							b: 0,
-							t: 30,
-						},
-						paper_bgcolor: "rgba(0,0,0,0)",
-						plot_bgcolor: "rgba(0,0,0,0)",
-					}}
-					config={{ responsive: true }}
-				/>
-			);
+					],
+					center: {
+						lat: (Math.max(...x) + Math.min(...x)) / 2,
+						lon: (Math.max(...y) + Math.min(...y)) / 2,
+					},
+					zoom: 17,
+				},
+				xaxis: {
+					title: "Latitude",
+				},
+				yaxis: {
+					title: "Longuitud",
+				},
+				margin: {
+					l: 0,
+					r: 0,
+					b: 0,
+					t: 30,
+				},
+				paper_bgcolor: "rgba(0,0,0,0)",
+				plot_bgcolor: "rgba(0,0,0,0)",
+			};
 		}
 
 		if (graph === "Spectrum") {
 			console.log("Plotting Spectrum...");
-			setPlot(
-				<Plot
-					data={[
-						{
-							x: x,
-							y: y,
-							type: "scatter",
-							mode: "lines",
-							line: { color: "green" },
-						},
-					]}
-					layout={{
-						title: "Spectrum",
-						height: height,
-						width: width,
-						margin: {
-							l: 70,
-							r: 0,
-							b: 40,
-							t: 30,
-						},
-						xaxis: {
-							title: "Intensity (au)",
-						},
-						yaxis: {
-							title: "Wavelength (nm)",
-						},
-						paper_bgcolor: "rgba(0,0,0,0)",
-						plot_bgcolor: "rgba(0,0,0,0)",
-					}}
-				/>
-			);
+
+			data = [
+				{
+					x: x,
+					y: y,
+					type: "scatter",
+					mode: "lines",
+					line: { color: "green" },
+				},
+			];
+			layout = {
+				title: "Spectrum",
+				height: height,
+				width: width,
+				margin: {
+					l: 70,
+					r: 0,
+					b: 40,
+					t: 30,
+				},
+				xaxis: {
+					title: "Intensity (au)",
+				},
+				yaxis: {
+					title: "Wavelength (nm)",
+				},
+				paper_bgcolor: "rgba(0,0,0,0)",
+				plot_bgcolor: "rgba(0,0,0,0)",
+			};
 		}
+
+		setPlot(<Plot className="plot" data={data} layout={layout} />);
 	};
 
 	// ===================== Confirm =====================
@@ -501,9 +492,15 @@ export default function Graphs() {
 				{graphs}
 				<br />
 				<br />
-				{colorscales}
-				<br />
-				<br />
+				{sensor === "Echosounder" ? (
+					<>
+						{colorscales} <br />
+						<br />{" "}
+					</>
+				) : (
+					<></>
+				)}
+
 				<Button
 					variant="contained"
 					sx={{ width: 100, height: 40 }}
