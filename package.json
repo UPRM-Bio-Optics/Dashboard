@@ -1,7 +1,6 @@
 {
 	"name": "dashboard-bathymtry",
 	"version": "0.1.0",
-	"homepage": "https://uprm-bio-optics.github.io/Dashboard-Bathymtry",
 	"private": true,
 	"dependencies": {
 		"@emotion/react": "^11.10.5",
