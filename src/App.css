@@ -6,6 +6,12 @@
   border: 1px solid red;
 } */
 
+/* .plot,
+.plot > * > * > * {
+	width: 50vw !important;
+	border: 2px solid red;
+} */
+
 #wait {
 	text-align: center;
 }

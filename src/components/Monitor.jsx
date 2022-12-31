@@ -69,6 +69,21 @@ export default function Monitor() {
 					return;
 				}
 			});
+			setTable(
+				<TableContainer component={Paper}>
+					<Table sx={{ minWidth: 250 }} aria-label="log table">
+						<TableHead>
+							<TableRow>
+								<TableCell>id</TableCell>
+								<TableCell align="left">Depth</TableCell>
+								<TableCell align="left">Time</TableCell>
+								<TableCell align="left">From</TableCell>
+							</TableRow>
+						</TableHead>
+						<TableBody></TableBody>
+					</Table>
+				</TableContainer>
+			);
 		});
 
 		client.on("error", (err) => {
@@ -83,11 +98,15 @@ export default function Monitor() {
 		client.on("message", (topic, message) => {
 			const payload = { topic, message: message.toString() };
 			console.log(payload);
-			rows.unshift({ depth: message.toString(), time: Date(), from: "bob" });
+			rows.unshift({
+				depth: message.toString(),
+				time: Date().replace("GMT-0400 (Atlantic Standard Time)", ""),
+				from: "bob",
+			});
 			console.log(rows);
 			setTable(
 				<TableContainer component={Paper}>
-					<Table sx={{ minWidth: 650 }} aria-label="simple table">
+					<Table sx={{ minWidth: 250 }} aria-label="log table">
 						<TableHead>
 							<TableRow>
 								<TableCell>id</TableCell>
@@ -160,19 +179,27 @@ export default function Monitor() {
 					<Button variant="contained" onClick={handleConnect}>
 						Connect
 					</Button>
-				</Grid>
-				<Grid item>
-					<Button variant="contained" color="secondary" onClick={handleTest}>
+					<Button
+						variant="contained"
+						color="secondary"
+						onClick={handleTest}
+						sx={{ m: 1 }}
+					>
 						Test
 					</Button>
-				</Grid>
-				<Grid item>
-					<Button variant="contained" color="error" onClick={handleDisconnect}>
+					<Button
+						variant="contained"
+						color="error"
+						onClick={handleDisconnect}
+						sx={{ m: 1 }}
+					>
 						Stop
 					</Button>
 				</Grid>
+				<Grid item xs={12}>
+					{table}
+				</Grid>
 			</Grid>
-			{table}
 		</>
 	);
 }

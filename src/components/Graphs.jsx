@@ -209,12 +209,10 @@ export default function Graphs() {
 			</Select>
 		</FormControl>
 	);
-
-	const width = 1000;
-	const height = 700;
-	const [plot, setPlot] = useState(
-		<h4 id="wait">Waiting for user input...</h4>
-	);
+	const title = graph + " - " + file;
+	const width = window.innerWidth * 0.7;
+	const height = window.innerHeight * 0.85;
+	const [plot, setPlot] = useState(null);
 	const handlePlot = () => {
 		if (file === "") {
 			return;
@@ -244,7 +242,7 @@ export default function Graphs() {
 			];
 
 			layout = {
-				title: "Contour",
+				title: title,
 				height: height,
 				width: width,
 				margin: {
@@ -271,7 +269,7 @@ export default function Graphs() {
 				},
 			];
 			layout = {
-				title: "Mesh",
+				title: title,
 				height: height,
 				width: width,
 				scene: {
@@ -379,7 +377,7 @@ export default function Graphs() {
 				},
 			];
 			layout = {
-				title: "Map Overlay",
+				title: title,
 				autosize: false,
 				height: height,
 				width: width,
@@ -430,7 +428,7 @@ export default function Graphs() {
 				},
 			];
 			layout = {
-				title: "Spectrum",
+				title: title,
 				height: height,
 				width: width,
 				margin: {
@@ -466,11 +464,19 @@ export default function Graphs() {
 		setButton("Confirm");
 	};
 
-	// ===================== On Render =====================
-	// const [loading, setLoading] = useState(false);
+	// ===================== To Keep Track of =====================
+
+	// Map files to sensor changes
 	useEffect(() => {
 		handleFileList(sensor);
 	}, [sensor]);
+
+	// Handle graph changes
+	// useEffect(() => {
+	// 	if (plot) {
+	// 		handlePlot();
+	// 	}
+	// }, [window.innerHeight, height]);
 
 	// ===================== Return =====================
 	return (
@@ -481,7 +487,7 @@ export default function Graphs() {
 			alignItems="flex-start"
 			spacing={3}
 		>
-			<Grid className="graph" item xs={3}>
+			<Grid className="graph" item xs={7} sm={3}>
 				<br />
 				{sensors}
 				<br />
