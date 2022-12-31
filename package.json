@@ -1,5 +1,6 @@
 {
 	"name": "dashboard-bathymtry",
+	"homepage": "https://uprm-bio-optics.github.io/Dashboard",
 	"version": "0.1.0",
 	"private": true,
 	"dependencies": {
