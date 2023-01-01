@@ -21,14 +21,14 @@ export default function Monitor() {
 	const [table, setTable] = useState(null);
 
 	// MQTT connection
-	const [broker, setBroker] = useState("broker.mqttdashboard.com");
-	const [port, setPort] = useState("8000");
+	const [broker, setBroker] = useState("broker.hivemq.com");
+	const [port, setPort] = useState("8884");
 	const [id, setId] = useState("hq");
 	const [topic, setTopic] = useState("bio-optics/bob");
 	const [client, setClient] = useState(null);
 
 	const handleConnect = () => {
-		const url = "ws://" + broker + ":" + port + "/mqtt";
+		const url = "wss://" + broker + ":" + port + "/mqtt";
 
 		console.log("Connecting to: ", url);
 
