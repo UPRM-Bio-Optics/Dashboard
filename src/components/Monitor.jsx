@@ -10,10 +10,8 @@ import TableRow from "@mui/material/TableRow";
 import TextField from "@mui/material/TextField";
 import { useEffect, useState } from "react";
 import * as mqtt from "mqtt";
-
-// function createData(depth, time, from) {
-// 	return { depth, time, from };
-// }
+import Snackbar from "@mui/material/Snackbar";
+import MuiAlert from "@mui/material/Alert";
 
 export default function Monitor() {
 	// Data
@@ -84,6 +82,7 @@ export default function Monitor() {
 					</Table>
 				</TableContainer>
 			);
+			setOpen(true);
 		});
 
 		client.on("error", (err) => {
@@ -135,6 +134,19 @@ export default function Monitor() {
 			);
 		});
 	}, [client]);
+
+	// Notifications
+	const [open, setOpen] = useState(false);
+	const handleClose = () => {
+		setOpen(false);
+	};
+	const notification = (
+		<Snackbar open={open} autoHideDuration={3000} onClose={handleClose}>
+			<MuiAlert onClose={handleClose} severity="success" sx={{ width: "100%" }}>
+				Connection success!
+			</MuiAlert>
+		</Snackbar>
+	);
 
 	return (
 		<>
@@ -200,6 +212,7 @@ export default function Monitor() {
 					{table}
 				</Grid>
 			</Grid>
+			{notification}
 		</>
 	);
 }
