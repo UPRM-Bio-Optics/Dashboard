@@ -21,7 +21,7 @@ export default function Graphs() {
 		}
 	};
 	const sensors = (
-		<FormControl fullWidth>
+		<FormControl fullWidth sx={{ mt: 3.7 }}>
 			<InputLabel id="sensor-select">Sensor</InputLabel>
 			<Select
 				labelId="sensor-select"
@@ -186,7 +186,18 @@ export default function Graphs() {
 	};
 
 	// ===================== Plotly =====================
-	const [colorscale, setColorscale] = useState("Viridis");
+	const colorscaleList = [
+		"Virdis",
+		"Jet",
+		"Portland",
+		"Picnic",
+		"Electric",
+		"Earth",
+		"Blackbody",
+		"RdBu",
+		"Greys",
+	];
+	const [colorscale, setColorscale] = useState(colorscaleList[0]);
 	const colorscales = (
 		<FormControl fullWidth>
 			<InputLabel id="colorscale-select">Colorscale</InputLabel>
@@ -197,21 +208,24 @@ export default function Graphs() {
 				label="Colorscale"
 				onChange={(e) => setColorscale(e.target.value)}
 			>
-				<MenuItem value={"Viridis"}>Viridis</MenuItem>
-				<MenuItem value={"Jet"}>Jet</MenuItem>
-				<MenuItem value={"Portland"}>Portland</MenuItem>
-				<MenuItem value={"Picnic"}>Picnic</MenuItem>
-				<MenuItem value={"Electric"}>Elecric</MenuItem>
-				<MenuItem value={"Earth"}>Earth</MenuItem>
-				<MenuItem value={"Blackbody"}>Blackbody</MenuItem>
-				<MenuItem value={"RdBu"}>RdBu</MenuItem>
-				<MenuItem value={"Greys"}>Greys</MenuItem>
+				{colorscaleList.map((text, index) => (
+					<MenuItem key={index} value={text}>
+						{text}
+					</MenuItem>
+				))}
 			</Select>
 		</FormControl>
 	);
 	const title = graph + " - " + file;
-	const width = window.innerWidth * 0.7;
-	const height = window.innerHeight * 0.85;
+	const [width, setWidth] = useState(
+		window.innerWidth >= 600 ? window.innerWidth * 0.7 : window.innerWidth * 0.8
+	);
+	const [height, setHeight] = useState(
+		window.innerWidth >= 600
+			? window.innerHeight * 0.85
+			: window.innerWidth * 0.85
+	);
+	const [zoom, setZoom] = useState(window.innerWidth >= 600 ? 16 : 15);
 	const [plot, setPlot] = useState(null);
 	const handlePlot = () => {
 		if (file === "") {
@@ -290,7 +304,7 @@ export default function Graphs() {
 					aspectratio: {
 						x: 1,
 						y: 1,
-						z: 0.5,
+						z: 1,
 					},
 				},
 				updatemenus: [
@@ -313,7 +327,7 @@ export default function Graphs() {
 						type: "buttons",
 						// x: 0.05,
 						xanchor: "left",
-						y: 1.05,
+						// y: 1.1,
 						yanchor: "top",
 						bgcolor: "rgb(255,255,255)",
 					},
@@ -343,12 +357,12 @@ export default function Graphs() {
 							},
 						],
 						direction: "left",
-						pad: { r: 0, l: 0, t: 0, b: 0 },
+						pad: { r: 0, l: 0, t: 40, b: 0 },
 						showactive: true,
 						type: "buttons",
 						// x: 0.05,
 						xanchor: "left",
-						y: 0.99,
+						// y: 0.95,
 						yanchor: "top",
 						bgcolor: "rgb(255,255,255)",
 					},
@@ -396,7 +410,7 @@ export default function Graphs() {
 						lat: (Math.max(...x) + Math.min(...x)) / 2,
 						lon: (Math.max(...y) + Math.min(...y)) / 2,
 					},
-					zoom: 17,
+					zoom: zoom,
 				},
 				xaxis: {
 					title: "Latitude",
@@ -473,10 +487,9 @@ export default function Graphs() {
 
 	// Handle graph changes
 	// useEffect(() => {
-	// 	if (plot) {
-	// 		handlePlot();
-	// 	}
-	// }, [window.innerHeight, height]);
+	// 	setWidth(window.innerWidth * 0.7);
+	// 	setHeight(window.innerHeight * 0.85);
+	// });
 
 	// ===================== Return =====================
 	return (
@@ -487,8 +500,8 @@ export default function Graphs() {
 			alignItems="flex-start"
 			spacing={3}
 		>
-			<Grid className="graph" item xs={7} sm={3}>
-				<br />
+			<Grid className="graph" item xs={12} sm={3}>
+				{/* <br /> */}
 				{sensors}
 				<br />
 				<br />
@@ -518,7 +531,8 @@ export default function Graphs() {
 			<Grid
 				className="graph"
 				item
-				xs={9}
+				xs={12}
+				sm={9}
 				// sx={{ width: "100vw", height: "100vh" }}
 			>
 				{plot}
