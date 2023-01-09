@@ -187,8 +187,8 @@ export default function Graphs() {
 
 	// ===================== Plotly =====================
 	const colorscaleList = [
-		"Virdis",
 		"Jet",
+		"Virdis",
 		"Portland",
 		"Picnic",
 		"Electric",
