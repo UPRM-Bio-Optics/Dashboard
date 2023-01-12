@@ -66,6 +66,7 @@ export default function Monitor() {
 					console.log("Subscribe to topics error", error);
 					return;
 				}
+				client.publish(topic, id + " connected!");
 			});
 			setTable(
 				<TableContainer component={Paper}>
@@ -73,9 +74,8 @@ export default function Monitor() {
 						<TableHead>
 							<TableRow>
 								<TableCell>id</TableCell>
-								<TableCell align="left">Depth</TableCell>
+								<TableCell align="left">Message</TableCell>
 								<TableCell align="left">Time</TableCell>
-								<TableCell align="left">From</TableCell>
 							</TableRow>
 						</TableHead>
 						<TableBody></TableBody>
@@ -98,9 +98,8 @@ export default function Monitor() {
 			const payload = { topic, message: message.toString() };
 			console.log(payload);
 			rows.unshift({
-				depth: message.toString(),
+				message: message.toString(),
 				time: Date().replace("GMT-0400 (Atlantic Standard Time)", ""),
-				from: "bob",
 			});
 			console.log(rows);
 			setTable(
@@ -109,9 +108,8 @@ export default function Monitor() {
 						<TableHead>
 							<TableRow>
 								<TableCell>id</TableCell>
-								<TableCell align="left">Depth</TableCell>
+								<TableCell align="left">Message</TableCell>
 								<TableCell align="left">Time</TableCell>
-								<TableCell align="left">From</TableCell>
 							</TableRow>
 						</TableHead>
 						<TableBody>
@@ -123,9 +121,8 @@ export default function Monitor() {
 									<TableCell component="th" scope="row">
 										{rows.length - index - 1}
 									</TableCell>
-									<TableCell align="left">{row.depth}</TableCell>
+									<TableCell align="left">{row.message}</TableCell>
 									<TableCell align="left">{row.time}</TableCell>
-									<TableCell align="left">{row.from}</TableCell>
 								</TableRow>
 							))}
 						</TableBody>

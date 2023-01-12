@@ -94,7 +94,7 @@ export default function Graphs() {
 						data.tree[i].path.includes("echo_sounder") &&
 						data.tree[i].path.includes("csv")
 					) {
-						// console.log("Echosouder file: ", data.tree[i].path);
+						// console.log("Echosounder file: ", data.tree[i].path);
 						result.push(data.tree[i].path.replace("Data/echo_sounder/", ""));
 					}
 					if (

@@ -5,6 +5,8 @@ import paho.mqtt.client as mqtt
 host = "broker.hivemq.com"
 port = 1883
 protocol = "tcp"
+topic = "bio-optics/bob"
+id = "bob"
 
 # The callback for when the client receives a CONNACK response from the server.
 
@@ -14,7 +16,8 @@ def on_connect(client, userdata, flags, rc):
 
     # Subscribing in on_connect() means that if we lose the connection and
     # reconnect then subscriptions will be renewed.
-    client.subscribe("bio-optics/bob")
+    client.subscribe(topic)
+    client.publish(topic, id+" connected!")
 
 # The callback for when a PUBLISH message is received from the server.
 
@@ -23,8 +26,9 @@ def on_message(client, userdata, msg):
     print(msg.topic+" "+str(msg.payload))
 
 
-client = mqtt.Client(client_id="bob", clean_session=True,
+client = mqtt.Client(client_id=id, clean_session=True,
                      userdata=None, transport=protocol)
+
 client.on_connect = on_connect
 client.on_message = on_message
 
