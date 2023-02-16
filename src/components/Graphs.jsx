@@ -1,12 +1,23 @@
+import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
+import CircularProgress from "@mui/material/CircularProgress";
 import FormControl from "@mui/material/FormControl";
 import Grid from "@mui/material/Grid";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
-import { useEffect, useState } from "react";
+import { styled } from "@mui/material/styles";
+import { useEffect, useMemo, useState } from "react";
 import Plot from "react-plotly.js";
-import CircularProgress from "@mui/material/CircularProgress";
+
+const DrawerHeader = styled("div")(({ theme }) => ({
+	display: "flex",
+	alignItems: "center",
+	justifyContent: "flex-end",
+	padding: theme.spacing(0, 1),
+	// necessary for content to be below app bar
+	...theme.mixins.toolbar,
+}));
 
 export default function Graphs() {
 	// ===================== Sensors =====================
@@ -135,13 +146,16 @@ export default function Graphs() {
 		</FormControl>
 	);
 
-	// ===================== Data handeling =====================
+	// ===================== Data handling =====================
 	const [x, setX] = useState([]);
 	const [y, setY] = useState([]);
 	const [z, setZ] = useState([]);
 
 	const handleData = async () => {
 		console.log("Fetching Data...");
+
+		const controller = new AbortController();
+		const signal = controller.signal;
 
 		var url =
 			"https://raw.githubusercontent.com/UPRM-Bio-Optics/Bathymetry-Observation-Boat/main/Data/echo_sounder/";
@@ -151,38 +165,35 @@ export default function Graphs() {
 				"https://raw.githubusercontent.com/UPRM-Bio-Optics/Bathymetry-Observation-Boat/main/Data/Spectrometer/csv/";
 		}
 
-		await fetch(url + file)
+		await fetch(url + file, { signal })
 			.then((response) => response.text())
 			.then((data) => data.split("\n"))
-			.then(
-				(csv) => {
-					// buffers
-					setX([]);
-					setY([]);
-					setZ([]);
+			.then((csv) => {
+				// buffers
+				setX([]);
+				setY([]);
+				setZ([]);
 
-					for (var i in csv) {
-						csv[i] = csv[i].split(",");
+				for (var i in csv) {
+					csv[i] = csv[i].split(",");
 
-						// Skip first index as it contains header text and skip empty rows
-						if (i <= 0 || csv[i].includes("") || csv[i].includes(undefined)) {
-							continue;
-						}
-
-						x.push(csv[i][0]);
-						y.push(csv[i][1]);
-
-						if (sensor === "Echosounder") {
-							z.push(csv[i][2]);
-						}
+					// Skip first index as it contains header text and skip empty rows
+					if (i <= 0 || csv[i].includes("") || csv[i].includes(undefined)) {
+						continue;
 					}
 
-					handlePlot();
+					x.push(csv[i][0]);
+					y.push(csv[i][1]);
 
-					console.log(x, y, z);
+					if (sensor === "Echosounder") {
+						z.push(csv[i][2]);
+					}
 				}
-				// console.log("after split: ", csv);
-			);
+
+				console.log(x, y, z);
+
+				handlePlot();
+			});
 	};
 
 	// ===================== Plotly =====================
@@ -216,17 +227,32 @@ export default function Graphs() {
 			</Select>
 		</FormControl>
 	);
+
 	const title = graph + " - " + file;
-	const [width, setWidth] = useState(
-		window.innerWidth >= 600 ? window.innerWidth * 0.7 : window.innerWidth * 0.8
-	);
-	const [height, setHeight] = useState(
-		window.innerWidth >= 600
-			? window.innerHeight * 0.85
-			: window.innerWidth * 0.85
-	);
-	const [zoom, setZoom] = useState(window.innerWidth >= 600 ? 16 : 15);
+
+	const width = () => {
+		if (window.innerWidth >= 900) {
+			return window.innerWidth * 0.7;
+		}
+		return window.innerWidth * 0.8;
+	};
+
+	const height = () => {
+		if (window.innerWidth >= 900) {
+			return window.innerHeight * 0.85;
+		}
+		return window.innerWidth * 0.85;
+	};
+
+	const zoom = () => {
+		if (window.innerWidth >= 600) {
+			return 16;
+		}
+		return 15;
+	};
+
 	const [plot, setPlot] = useState(null);
+
 	const handlePlot = () => {
 		if (file === "") {
 			return;
@@ -257,8 +283,8 @@ export default function Graphs() {
 
 			layout = {
 				title: title,
-				height: height,
-				width: width,
+				height: height(),
+				width: width(),
 				margin: {
 					l: 70,
 					r: 0,
@@ -284,11 +310,11 @@ export default function Graphs() {
 			];
 			layout = {
 				title: title,
-				height: height,
-				width: width,
+				height: height(),
+				width: width(),
 				scene: {
 					xaxis: {
-						title: "Longuitud",
+						title: "Longitude",
 						showgrid: true,
 					},
 					yaxis: {
@@ -393,8 +419,8 @@ export default function Graphs() {
 			layout = {
 				title: title,
 				autosize: false,
-				height: height,
-				width: width,
+				height: height(),
+				width: width(),
 				mapbox: {
 					style: "white-bg",
 					layers: [
@@ -410,13 +436,13 @@ export default function Graphs() {
 						lat: (Math.max(...x) + Math.min(...x)) / 2,
 						lon: (Math.max(...y) + Math.min(...y)) / 2,
 					},
-					zoom: zoom,
+					zoom: zoom(),
 				},
 				xaxis: {
 					title: "Latitude",
 				},
 				yaxis: {
-					title: "Longuitud",
+					title: "Longitude",
 				},
 				margin: {
 					l: 0,
@@ -443,8 +469,8 @@ export default function Graphs() {
 			];
 			layout = {
 				title: title,
-				height: height,
-				width: width,
+				height: height(),
+				width: width(),
 				margin: {
 					l: 70,
 					r: 0,
@@ -486,57 +512,66 @@ export default function Graphs() {
 	}, [sensor]);
 
 	// Handle graph changes
-	// useEffect(() => {
-	// 	setWidth(window.innerWidth * 0.7);
-	// 	setHeight(window.innerHeight * 0.85);
-	// });
+	useEffect(() => {
+		return () => {
+			console.log("Clearing plot");
+			setPlot(null);
+		};
+	}, []);
+
+	useMemo(() => {
+		console.log(plot);
+	}, [plot]);
 
 	// ===================== Return =====================
 	return (
-		<Grid
-			container
-			direction="row"
-			justifyContent="flex-start"
-			alignItems="flex-start"
-			spacing={3}
-		>
-			<Grid className="graph" item xs={12} sm={3}>
-				{/* <br /> */}
-				{sensors}
-				<br />
-				<br />
-				{files}
-				<br />
-				<br />
-				{graphs}
-				<br />
-				<br />
-				{sensor === "Echosounder" ? (
-					<>
-						{colorscales} <br />
-						<br />{" "}
-					</>
-				) : (
-					<></>
-				)}
-
-				<Button
-					variant="contained"
-					sx={{ width: 100, height: 40 }}
-					onClick={handleConfirm}
-				>
-					{button}
-				</Button>
-			</Grid>
+		<Box component="main" sx={{ flexGrow: 0, ml: 10, mt: 2 }}>
+			<DrawerHeader />
 			<Grid
-				className="graph"
-				item
-				xs={12}
-				sm={9}
-				// sx={{ width: "100vw", height: "100vh" }}
+				container
+				direction="row"
+				justifyContent="flex-start"
+				alignItems="flex-start"
+				spacing={3}
 			>
-				{plot}
+				<Grid className="graph" item xs={11} sm={11} md={3}>
+					{/* <br /> */}
+					{sensors}
+					<br />
+					<br />
+					{files}
+					<br />
+					<br />
+					{graphs}
+					<br />
+					<br />
+					{sensor === "Echosounder" ? (
+						<>
+							{colorscales} <br />
+							<br />{" "}
+						</>
+					) : (
+						<></>
+					)}
+
+					<Button
+						variant="contained"
+						sx={{ width: 100, height: 40 }}
+						onClick={handleConfirm}
+					>
+						{button}
+					</Button>
+				</Grid>
+				<Grid
+					className="graph"
+					item
+					xs={12}
+					md={9}
+					// sx={{ width: "100vw", height: "100vh" }}
+				>
+					{plot}
+				</Grid>
 			</Grid>
-		</Grid>
+		</Box>
 	);
 }

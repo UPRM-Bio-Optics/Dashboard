@@ -20,8 +20,7 @@ import { styled, useTheme } from "@mui/material/styles";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import { useState } from "react";
-import Graphs from "./Graphs";
-import Monitor from "./Monitor";
+import { useNavigate } from "react-router";
 
 const drawerWidth = 200;
 
@@ -45,15 +44,6 @@ const closedMixin = (theme) => ({
 		width: `calc(${theme.spacing(8)} + 1px)`,
 	},
 });
-
-const DrawerHeader = styled("div")(({ theme }) => ({
-	display: "flex",
-	alignItems: "center",
-	justifyContent: "flex-end",
-	padding: theme.spacing(0, 1),
-	// necessary for content to be below app bar
-	...theme.mixins.toolbar,
-}));
 
 const AppBar = styled(MuiAppBar, {
 	shouldForwardProp: (prop) => prop !== "open",
@@ -90,7 +80,16 @@ const Drawer = styled(MuiDrawer, {
 	}),
 }));
 
-export default function NavBar(props) {
+const DrawerHeader = styled("div")(({ theme }) => ({
+	display: "flex",
+	alignItems: "center",
+	justifyContent: "flex-end",
+	padding: theme.spacing(0, 1),
+	// necessary for content to be below app bar
+	...theme.mixins.toolbar,
+}));
+
+export default function Navbar(props) {
 	const theme = useTheme();
 
 	const [colorModeIcon, setColorModeIcon] = useState(<Brightness7Icon />);
@@ -117,15 +116,7 @@ export default function NavBar(props) {
 		setOpen(false);
 	};
 
-	const [content, setContent] = useState(<Graphs></Graphs>);
-
-	const handleGraphs = () => {
-		setContent(<Graphs></Graphs>);
-	};
-
-	const handleMonitor = () => {
-		setContent(<Monitor></Monitor>);
-	};
+	const navigate = useNavigate();
 
 	return (
 		<Box sx={{ display: "flex" }}>
@@ -164,40 +155,53 @@ export default function NavBar(props) {
 				</DrawerHeader>
 				<Divider />
 				<List>
-					{["Graphs", "Monitor"].map((text, index) => (
-						<ListItem key={text} disablePadding sx={{ display: "block" }}>
-							<ListItemButton
+					<ListItem key={"graphs"} disablePadding sx={{ display: "block" }}>
+						<ListItemButton
+							sx={{
+								minHeight: 48,
+								justifyContent: open ? "initial" : "center",
+								px: 2.5,
+							}}
+							onClick={() => navigate("graphs")}
+						>
+							<ListItemIcon
 								sx={{
-									minHeight: 48,
-									justifyContent: open ? "initial" : "center",
-									px: 2.5,
-								}}
-								onClick={() => {
-									index === 0 ? handleGraphs() : handleMonitor();
+									minWidth: 0,
+									mr: open ? 3 : "auto",
+									justifyContent: "center",
 								}}
 							>
-								<ListItemIcon
-									sx={{
-										minWidth: 0,
-										mr: open ? 3 : "auto",
-										justifyContent: "center",
-									}}
-								>
-									{index % 2 === 0 ? <TerrainIcon /> : <MonitorIcon />}
-								</ListItemIcon>
-								<ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
-							</ListItemButton>
-						</ListItem>
-					))}
+								<TerrainIcon />
+							</ListItemIcon>
+							<ListItemText primary={"Graphs"} sx={{ opacity: open ? 1 : 0 }} />
+						</ListItemButton>
+					</ListItem>
+					<ListItem key={"monitor"} disablePadding sx={{ display: "block" }}>
+						<ListItemButton
+							sx={{
+								minHeight: 48,
+								justifyContent: open ? "initial" : "center",
+								px: 2.5,
+							}}
+							onClick={() => navigate("monitor")}
+						>
+							<ListItemIcon
+								sx={{
+									minWidth: 0,
+									mr: open ? 3 : "auto",
+									justifyContent: "center",
+								}}
+							>
+								<MonitorIcon />
+							</ListItemIcon>
+							<ListItemText
+								primary={"Monitor"}
+								sx={{ opacity: open ? 1 : 0 }}
+							/>
+						</ListItemButton>
+					</ListItem>
 				</List>
 			</Drawer>
-			<Box
-				component="main"
-				sx={{ flexGrow: 0, p: 4, width: "100vw", height: "80vh" }}
-			>
-				<DrawerHeader />
-				{content}
-			</Box>
 		</Box>
 	);
 }

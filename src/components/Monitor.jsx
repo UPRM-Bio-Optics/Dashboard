@@ -1,6 +1,10 @@
+import MuiAlert from "@mui/material/Alert";
+import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
+import Snackbar from "@mui/material/Snackbar";
+import { styled } from "@mui/material/styles";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -8,20 +12,35 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import TextField from "@mui/material/TextField";
-import { useEffect, useState } from "react";
 import * as mqtt from "mqtt";
-import Snackbar from "@mui/material/Snackbar";
-import MuiAlert from "@mui/material/Alert";
+import { useEffect, useState } from "react";
+
+const DrawerHeader = styled("div")(({ theme }) => ({
+	display: "flex",
+	alignItems: "center",
+	justifyContent: "flex-end",
+	padding: theme.spacing(0, 1),
+	// necessary for content to be below app bar
+	...theme.mixins.toolbar,
+}));
 
 export default function Monitor() {
 	// Data
 	const rows = [];
 	const [table, setTable] = useState(null);
 
+	const random_id = () => {
+		return (
+			"hq-" +
+			Math.floor((1 + Math.random()) * 0x10000)
+				.toString(16)
+				.substring(1)
+		);
+	};
 	// MQTT connection
 	const [broker, setBroker] = useState("broker.hivemq.com");
 	const [port, setPort] = useState("8884");
-	const [id, setId] = useState("hq");
+	const [id, setId] = useState(random_id);
 	const [topic, setTopic] = useState("bio-optics/bob");
 	const [client, setClient] = useState(null);
 
@@ -48,6 +67,7 @@ export default function Monitor() {
 
 	const handleDisconnect = () => {
 		client.end(() => console.log("Ended connection."));
+		setDisconnected(true);
 		setTable(null);
 		setClient(null);
 	};
@@ -56,7 +76,6 @@ export default function Monitor() {
 		if (!client) {
 			return;
 		}
-
 		console.log(client);
 
 		client.on("connect", () => {
@@ -68,6 +87,7 @@ export default function Monitor() {
 				}
 				client.publish(topic, id + " connected!");
 			});
+
 			setTable(
 				<TableContainer component={Paper}>
 					<Table sx={{ minWidth: 250 }} aria-label="log table">
@@ -82,7 +102,7 @@ export default function Monitor() {
 					</Table>
 				</TableContainer>
 			);
-			setOpen(true);
+			setConnected(true);
 		});
 
 		client.on("error", (err) => {
@@ -130,23 +150,48 @@ export default function Monitor() {
 				</TableContainer>
 			);
 		});
+
+		return handleDisconnect;
 	}, [client]);
 
 	// Notifications
-	const [open, setOpen] = useState(false);
-	const handleClose = () => {
-		setOpen(false);
-	};
-	const notification = (
-		<Snackbar open={open} autoHideDuration={3000} onClose={handleClose}>
-			<MuiAlert onClose={handleClose} severity="success" sx={{ width: "100%" }}>
-				Connection success!
+	const [connected, setConnected] = useState(false);
+	const connected_notification = (
+		<Snackbar
+			open={connected}
+			autoHideDuration={3000}
+			onClose={() => setConnected(false)}
+		>
+			<MuiAlert
+				onClose={() => setConnected(false)}
+				severity="success"
+				sx={{ width: "100%" }}
+			>
+				Connection successful!
+			</MuiAlert>
+		</Snackbar>
+	);
+
+	const [disconnected, setDisconnected] = useState(false);
+	const disconnected_notification = (
+		<Snackbar
+			open={disconnected}
+			autoHideDuration={3000}
+			onClose={() => setDisconnected(false)}
+		>
+			<MuiAlert
+				onClose={() => setDisconnected(false)}
+				severity="error"
+				sx={{ width: "100%" }}
+			>
+				Client disconnected.
 			</MuiAlert>
 		</Snackbar>
 	);
 
 	return (
-		<>
+		<Box component="main" sx={{ flexGrow: 0, ml: 10, mt: 5 }}>
+			<DrawerHeader />
 			<Grid container spacing={1}>
 				<Grid item>
 					<TextField
@@ -209,7 +254,8 @@ export default function Monitor() {
 					{table}
 				</Grid>
 			</Grid>
-			{notification}
-		</>
+			{connected_notification}
+			{disconnected_notification}
+		</Box>
 	);
 }
