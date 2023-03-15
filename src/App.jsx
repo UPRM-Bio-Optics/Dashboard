@@ -5,7 +5,7 @@ import { Navigate, Route, Routes } from "react-router";
 import "./App.css";
 import Graphs from "./components/Graphs";
 import Monitor from "./components/Monitor";
-import Navbar from "./components/Navbar";
+import Navbar from "./components/NavBar";
 
 // Fix imports
 import buffer from "buffer";
@@ -16,7 +16,7 @@ window.process = process;
 // Main app component
 function App() {
 	// Set fixed color scheme
-	const [scheme, setScheme] = useState("light");
+	const [scheme, setScheme] = useState("dark");
 
 	// Auto detect browser color scheme
 	// const [scheme, setScheme] = useState(
