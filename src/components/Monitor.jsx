@@ -43,6 +43,7 @@ export default function Monitor() {
 	const [id, setId] = useState(random_id);
 	const [topic, setTopic] = useState("bio-optics/bob");
 	const [client, setClient] = useState(null);
+	const [command, setCommand] = useState(null);
 
 	const handleConnect = () => {
 		const url = "wss://" + broker + ":" + port + "/mqtt";
@@ -60,11 +61,18 @@ export default function Monitor() {
 		setClient(mqtt.connect(url, options));
 	};
 
+
 	const handleTest = () => {
 		console.log("Testing...");
-		client.publish("bio-optics/bob", "Testing 123!");
+		client.publish(topic, "Testing 123!");
 	};
 
+
+	const handleTestCommand = (command) => {
+
+		console.log("Testing command")
+		client.publish(topic, command)
+	}
 	const handleDisconnect = () => {
 		client.end(() => console.log("Ended connection."));
 		setDisconnected(true);
@@ -248,6 +256,23 @@ export default function Monitor() {
 						sx={{ m: 1 }}
 					>
 						Stop
+					</Button>
+					<TextField
+						id="filled-basic"
+						label="Command To Execute"
+						variant="filled"
+						onChange={(e) => setCommand(e.target.value)}
+					/>
+					<Button
+						variant="contained"
+						color="primary"
+						onClick={() => {
+							handleTestCommand("cmd: " + command)
+						}
+						}
+						sx={{ m: 1 }}
+					>
+						Execute
 					</Button>
 				</Grid>
 				<Grid item xs={12}>
